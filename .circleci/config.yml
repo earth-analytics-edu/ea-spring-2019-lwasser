@@ -1,0 +1,60 @@
+version: 2.1
+
+jobs:
+  grade:
+    docker:
+      - image: circleci/python:3.7
+
+    working_directory: /tmp/repo
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            python3 -m venv /tmp/venv
+            . /tmp/venv/bin/activate
+            pip install --progress-bar off ipython papermill ipywidgets
+            pip install --progress-bar off https://github.com/earthlab/grading-workflow-experiments/archive/master.zip
+
+      - run:
+          name: "Prepare directories"
+          command: |
+            mkdir -p notebooks/week1
+            mkdir -p notebooks/week1/.ipynb_checkpoints
+            mkdir -p notebooks/week-03
+            mkdir -p notebooks/week-03/.ipynb_checkpoints
+            
+      - run:
+          name: Execute week1/homework.ipynb
+          command: |
+            . /tmp/venv/bin/activate
+            papermill week1/homework.ipynb week1/homework-graded.ipynb
+            jupyter nbconvert --to html --stdout week1/homework-graded.ipynb > notebooks/week1/homework.html
+      - run:
+          name: Execute week1/.ipynb_checkpoints/homework-checkpoint.ipynb
+          command: |
+            . /tmp/venv/bin/activate
+            papermill week1/.ipynb_checkpoints/homework-checkpoint.ipynb week1/.ipynb_checkpoints/homework-checkpoint-graded.ipynb
+            jupyter nbconvert --to html --stdout week1/.ipynb_checkpoints/homework-checkpoint-graded.ipynb > notebooks/week1/.ipynb_checkpoints/homework-checkpoint.html
+      - run:
+          name: Execute week-03/time-series-homework.ipynb
+          command: |
+            . /tmp/venv/bin/activate
+            papermill week-03/time-series-homework.ipynb week-03/time-series-homework-graded.ipynb
+            jupyter nbconvert --to html --stdout week-03/time-series-homework-graded.ipynb > notebooks/week-03/time-series-homework.html
+      - run:
+          name: Execute week-03/.ipynb_checkpoints/time-series-homework-checkpoint.ipynb
+          command: |
+            . /tmp/venv/bin/activate
+            papermill week-03/.ipynb_checkpoints/time-series-homework-checkpoint.ipynb week-03/.ipynb_checkpoints/time-series-homework-checkpoint-graded.ipynb
+            jupyter nbconvert --to html --stdout week-03/.ipynb_checkpoints/time-series-homework-checkpoint-graded.ipynb > notebooks/week-03/.ipynb_checkpoints/time-series-homework-checkpoint.html
+      
+      - store_artifacts:
+          path: /tmp/repo/notebooks
+          destination: notebooks
+
+workflows:
+  version: 2
+  grade_me:
+    jobs:
+      - grade
