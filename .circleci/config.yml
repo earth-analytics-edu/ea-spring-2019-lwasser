@@ -20,9 +20,11 @@ jobs:
           name: "Prepare directories"
           command: |
             mkdir -p notebooks/week1
-            mkdir -p notebooks/week1/.ipynb_checkpoints
             mkdir -p notebooks/week-03
             mkdir -p notebooks/week-03/.ipynb_checkpoints
+            mkdir -p notebooks/week-04
+            mkdir -p notebooks/week-04/.ipynb_checkpoints
+            mkdir -p notebooks/week-04/.ipynb_checkpoints
             
       - run:
           name: Execute week1/homework.ipynb
@@ -30,12 +32,6 @@ jobs:
             . /tmp/venv/bin/activate
             papermill week1/homework.ipynb week1/homework-graded.ipynb
             jupyter nbconvert --to html --stdout week1/homework-graded.ipynb > notebooks/week1/homework.html
-      - run:
-          name: Execute week1/.ipynb_checkpoints/homework-checkpoint.ipynb
-          command: |
-            . /tmp/venv/bin/activate
-            papermill week1/.ipynb_checkpoints/homework-checkpoint.ipynb week1/.ipynb_checkpoints/homework-checkpoint-graded.ipynb
-            jupyter nbconvert --to html --stdout week1/.ipynb_checkpoints/homework-checkpoint-graded.ipynb > notebooks/week1/.ipynb_checkpoints/homework-checkpoint.html
       - run:
           name: Execute week-03/time-series-homework.ipynb
           command: |
@@ -48,6 +44,24 @@ jobs:
             . /tmp/venv/bin/activate
             papermill week-03/.ipynb_checkpoints/time-series-homework-checkpoint.ipynb week-03/.ipynb_checkpoints/time-series-homework-checkpoint-graded.ipynb
             jupyter nbconvert --to html --stdout week-03/.ipynb_checkpoints/time-series-homework-checkpoint-graded.ipynb > notebooks/week-03/.ipynb_checkpoints/time-series-homework-checkpoint.html
+      - run:
+          name: Execute week-04/time-series-homework-wk-4.ipynb
+          command: |
+            . /tmp/venv/bin/activate
+            papermill week-04/time-series-homework-wk-4.ipynb week-04/time-series-homework-wk-4-graded.ipynb
+            jupyter nbconvert --to html --stdout week-04/time-series-homework-wk-4-graded.ipynb > notebooks/week-04/time-series-homework-wk-4.html
+      - run:
+          name: Execute week-04/.ipynb_checkpoints/time-series-homework-checkpoint.ipynb
+          command: |
+            . /tmp/venv/bin/activate
+            papermill week-04/.ipynb_checkpoints/time-series-homework-checkpoint.ipynb week-04/.ipynb_checkpoints/time-series-homework-checkpoint-graded.ipynb
+            jupyter nbconvert --to html --stdout week-04/.ipynb_checkpoints/time-series-homework-checkpoint-graded.ipynb > notebooks/week-04/.ipynb_checkpoints/time-series-homework-checkpoint.html
+      - run:
+          name: Execute week-04/.ipynb_checkpoints/time-series-homework-wk-4-checkpoint.ipynb
+          command: |
+            . /tmp/venv/bin/activate
+            papermill week-04/.ipynb_checkpoints/time-series-homework-wk-4-checkpoint.ipynb week-04/.ipynb_checkpoints/time-series-homework-wk-4-checkpoint-graded.ipynb
+            jupyter nbconvert --to html --stdout week-04/.ipynb_checkpoints/time-series-homework-wk-4-checkpoint-graded.ipynb > notebooks/week-04/.ipynb_checkpoints/time-series-homework-wk-4-checkpoint.html
       
       - store_artifacts:
           path: /tmp/repo/notebooks
