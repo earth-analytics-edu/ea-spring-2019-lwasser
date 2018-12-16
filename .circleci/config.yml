@@ -3,58 +3,50 @@ version: 2.1
 jobs:
   grade:
     docker:
-      - image: circleci/python:3.7
+      - image: continuumio/miniconda3:4.5.11
 
     working_directory: /tmp/repo
     steps:
       - checkout
       - run:
-          name: Install dependencies
+          name: Install grading dependencies
           command: |
-            python3 -m venv /tmp/venv
-            . /tmp/venv/bin/activate
-            pip install --progress-bar off ipython papermill ipywidgets
+            source activate base
+            pip install --progress-bar off ipython ipywidgets
+            pip install --progress-bar off https://github.com/nteract/papermill/archive/89a43a1bade7d9ba71b47a8a18cfc4d0b82e902a.zip
             pip install --progress-bar off https://github.com/earthlab/grading-workflow-experiments/archive/master.zip
+
+      - run:
+          name: Install course specific dependencies
+          command: |
+            source activate base
+            [ -e environment.yml ] && conda env update --quiet -f environment.yml && conda clean -tipsy || echo nothing to do
 
       - run:
           name: "Prepare directories"
           command: |
             mkdir -p notebooks/week1
             mkdir -p notebooks/week-03
-            mkdir -p notebooks/week-03/.ipynb_checkpoints
             mkdir -p notebooks/week-04
-            mkdir -p notebooks/week-04/.ipynb_checkpoints
             
       - run:
           name: Execute week1/homework.ipynb
           command: |
-            . /tmp/venv/bin/activate
-            papermill week1/homework.ipynb week1/homework-graded.ipynb
+            source activate base
+            papermill --cwd week1 week1/homework.ipynb homework-graded.ipynb
             jupyter nbconvert --to html --stdout week1/homework-graded.ipynb > notebooks/week1/homework.html
       - run:
           name: Execute week-03/time-series-homework.ipynb
           command: |
-            . /tmp/venv/bin/activate
-            papermill week-03/time-series-homework.ipynb week-03/time-series-homework-graded.ipynb
+            source activate base
+            papermill --cwd week-03 week-03/time-series-homework.ipynb time-series-homework-graded.ipynb
             jupyter nbconvert --to html --stdout week-03/time-series-homework-graded.ipynb > notebooks/week-03/time-series-homework.html
       - run:
-          name: Execute week-03/.ipynb_checkpoints/time-series-homework-checkpoint.ipynb
+          name: Execute week-04/time-series-homework-wk-4.ipynb
           command: |
-            . /tmp/venv/bin/activate
-            papermill week-03/.ipynb_checkpoints/time-series-homework-checkpoint.ipynb week-03/.ipynb_checkpoints/time-series-homework-checkpoint-graded.ipynb
-            jupyter nbconvert --to html --stdout week-03/.ipynb_checkpoints/time-series-homework-checkpoint-graded.ipynb > notebooks/week-03/.ipynb_checkpoints/time-series-homework-checkpoint.html
-      - run:
-          name: Execute week-04/time-series-homework-2.ipynb
-          command: |
-            . /tmp/venv/bin/activate
-            papermill week-04/time-series-homework-2.ipynb week-04/time-series-homework-2-graded.ipynb
-            jupyter nbconvert --to html --stdout week-04/time-series-homework-2-graded.ipynb > notebooks/week-04/time-series-homework-2.html
-      - run:
-          name: Execute week-04/.ipynb_checkpoints/time-series-homework-checkpoint.ipynb
-          command: |
-            . /tmp/venv/bin/activate
-            papermill week-04/.ipynb_checkpoints/time-series-homework-checkpoint.ipynb week-04/.ipynb_checkpoints/time-series-homework-checkpoint-graded.ipynb
-            jupyter nbconvert --to html --stdout week-04/.ipynb_checkpoints/time-series-homework-checkpoint-graded.ipynb > notebooks/week-04/.ipynb_checkpoints/time-series-homework-checkpoint.html
+            source activate base
+            papermill --cwd week-04 week-04/time-series-homework-wk-4.ipynb time-series-homework-wk-4-graded.ipynb
+            jupyter nbconvert --to html --stdout week-04/time-series-homework-wk-4-graded.ipynb > notebooks/week-04/time-series-homework-wk-4.html
       
       - store_artifacts:
           path: /tmp/repo/notebooks
