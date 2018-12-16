@@ -26,6 +26,7 @@ jobs:
           name: "Prepare directories"
           command: |
             mkdir -p notebooks/week1
+            mkdir -p notebooks/week-05
             mkdir -p notebooks/week-03
             mkdir -p notebooks/week-04
             
@@ -35,6 +36,12 @@ jobs:
             source activate base
             papermill --cwd week1 week1/homework.ipynb homework-graded.ipynb
             jupyter nbconvert --to html --stdout week1/homework-graded.ipynb > notebooks/week1/homework.html
+      - run:
+          name: Execute week-05/time-series-homework-wk-5.ipynb
+          command: |
+            source activate base
+            papermill --cwd week-05 week-05/time-series-homework-wk-5.ipynb time-series-homework-wk-5-graded.ipynb
+            jupyter nbconvert --to html --stdout week-05/time-series-homework-wk-5-graded.ipynb > notebooks/week-05/time-series-homework-wk-5.html
       - run:
           name: Execute week-03/time-series-homework.ipynb
           command: |
